@@ -22,9 +22,7 @@ def roll_die():
 def check_ladder_snake(position):
     if position in ladders:
         return ladders[position]
-    if position in snakes:
-        return snakes[position]
-    return position
+    return snakes[position] if position in snakes else position
 
 # Main game loop
 while True:

@@ -42,9 +42,9 @@ class Game:
             except:
                 self.message = "could not find piece; index probably out of range"
                 target = None
-                
+
             if target:
-                print("found "+str(target))
+                print(f"found {str(target)}")
                 if target.Color != self.playersturn:
                     self.message = "you aren't allowed to move that piece this turn"
                     continue
@@ -53,13 +53,11 @@ class Game:
                     self.gameboard[endpos] = self.gameboard[startpos]
                     del self.gameboard[startpos]
                     self.isCheck()
-                    if self.playersturn == BLACK:
-                        self.playersturn = WHITE
-                    else : self.playersturn = BLACK
-                else : 
-                    self.message = "invalid move" + str(target.availableMoves(startpos[0],startpos[1],self.gameboard))
+                    self.playersturn = WHITE if self.playersturn == BLACK else BLACK
+                else: 
+                    self.message = f"invalid move{str(target.availableMoves(startpos[0], startpos[1], self.gameboard))}"
                     print(target.availableMoves(startpos[0],startpos[1],self.gameboard))
-            else : self.message = "there is no piece in that space"
+            else: self.message = "there is no piece in that space"
                     
     def isCheck(self):
         #ascertain where the kings are, check all pieces of opposing color against those kings, then if either get hit, check if its checkmate
@@ -108,7 +106,7 @@ class Game:
             print(chr(i+97),end="|")
             for j in range(0,8):
                 item = self.gameboard.get((i,j)," ")
-                print(str(item)+' |', end = " ")
+                print(f'{str(item)} |', end = " ")
             print()
         print("-"*32)
             
@@ -130,9 +128,9 @@ class Piece:
         self.position = None
         self.Color = color
     def isValid(self,startpos,endpos,Color,gameboard):
-        if endpos in self.availableMoves(startpos[0],startpos[1],gameboard, Color = Color):
-            return True
-        return False
+        return endpos in self.availableMoves(
+            startpos[0], startpos[1], gameboard, Color=Color
+        )
     def __repr__(self):
         return self.name
     
@@ -165,14 +163,17 @@ class Piece:
                 
     def isInBounds(self,x,y):
         "checks if a position is on the board"
-        if x >= 0 and x < 8 and y >= 0 and y < 8:
-            return True
-        return False
+        return x >= 0 and x < 8 and y >= 0 and y < 8
     
     def noConflict(self,gameboard,initialColor,x,y):
         "checks if a single position poses no conflict to the rules of chess"
-        if self.isInBounds(x,y) and (((x,y) not in gameboard) or gameboard[(x,y)].Color != initialColor) : return True
-        return False
+        return bool(
+            self.isInBounds(x, y)
+            and (
+                ((x, y) not in gameboard)
+                or gameboard[(x, y)].Color != initialColor
+            )
+        )
         
         
 chessCardinals = [(1,0),(0,1),(-1,0),(0,-1)]
